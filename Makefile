@@ -19,7 +19,7 @@ build_windows_x64:
 		GOARCH=amd64 \
 		go build -buildmode=c-archive -o ./bin/${LIB_NAME}-windows.a ./src/${LIB_NAME}.go
 
-build-all: build_linux_x64  build_windows_x64  build_darwin_arm64 
+build-all: build_linux_x64  build_windows_x64
 
 build: clean \
 	build-all
