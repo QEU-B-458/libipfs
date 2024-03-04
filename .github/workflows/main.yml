@@ -20,8 +20,10 @@ jobs:
           make test
           make lint
           make vet
-      - name: Zip build artifact
-        run: zip -r libipfs-windows.zip ./bin/libipfs-windows.a
+      - name: Zip windows build artifact
+        run: cd bin && zip -r libipfs-windows.zip ./libipfs-windows.a ./libipfs-windows.h
+        name: zip linux build artifact
+        run: cd bin && zip -r libipfs-linux.zip ./libipfs-linux.a ./libipfs-linux.h
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
