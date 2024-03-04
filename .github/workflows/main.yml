@@ -37,8 +37,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.0
-        release_name: Release 1.0.0
+        tag_name: ${{ github.runnumber }}
+        release_name: Release ${{ github.runnumber }}
         body: |
           Description of the release
         draft: false
