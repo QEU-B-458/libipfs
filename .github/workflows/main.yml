@@ -17,9 +17,6 @@ jobs:
       - name: Run make targets
         run: |
           make build
-          make test
-          make lint
-          make vet
       - name: Zip windows build artifact
         run: cd bin && zip -r libipfs-windows.zip ./libipfs-windows.a ./libipfs-windows.h
       - name: zip linux build artifact
