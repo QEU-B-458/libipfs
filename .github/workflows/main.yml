@@ -1,56 +1,47 @@
 name: Build and Release
-
 on: [push]
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: '1.19'
-
-    - name: Install build dependencies
-      run: sudo apt update && sudo apt install -y gcc-mingw-w64-x86-64
-
-    - name: Download dependencies
-      run: go mod download
-
-    - name: Run make targets
-      run: |
-        make build
-        make test
-        make lint
-        make vet
-
-    - name: Zip build artifact
-      run: zip -r libipfs-windows.zip ./bin/libipfs-windows.a
-
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
-        body: |
-          Description of the release
-        draft: false
-        prerelease: false
-
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./libipfs-windows.zip
-        asset_name: libipfs-windows.zip
-        asset_content_type: application/zip
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.19'
+      - name: Install build dependencies
+        run: sudo apt update && sudo apt install -y gcc-mingw-w64-x86-64
+      - name: Download dependencies
+        run: go mod download
+      - name: Run make targets
+        run: |
+          make build
+          make test
+          make lint
+          make vet
+      - name: Zip build artifact
+        run: zip -r libipfs-windows.zip ./bin/libipfs-windows.a
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.tag_version.outputs.upload_url }}
+          asset_path: ./libipfs-windows.zip
+          asset_name: libipfs-windows.zip
+          asset_content_type: application/zip
