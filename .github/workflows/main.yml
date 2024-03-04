@@ -22,7 +22,7 @@ jobs:
           make vet
       - name: Zip windows build artifact
         run: cd bin && zip -r libipfs-windows.zip ./libipfs-windows.a ./libipfs-windows.h
-        name: zip linux build artifact
+      - name: zip linux build artifact
         run: cd bin && zip -r libipfs-linux.zip ./libipfs-linux.a ./libipfs-linux.h
       - name: Bump version and push tag
         id: tag_version
@@ -47,4 +47,14 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./libipfs-windows.zip
           asset_name: libipfs-windows.zip
+          asset_content_type: application/zip
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./libipfs-linux.zip
+          asset_name: libipfs-linux.zip
           asset_content_type: application/zip
