@@ -37,7 +37,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.runnumber }}
+        tag_name: Tag ${{ github.runnumber }}
         release_name: Release ${{ github.runnumber }}
         body: |
           Description of the release
