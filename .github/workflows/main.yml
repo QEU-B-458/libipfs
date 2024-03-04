@@ -1,12 +1,6 @@
-name: FyneApp Build
+name: Build
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push]
 
 jobs:
   build:
@@ -16,22 +10,20 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Setup Go
+    - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.16
+        go-version: '1.19'
 
+    - name: Install build dependencies
+      run: sudo apt update && sudo apt install -y gcc g++
+      
     - name: Download dependencies
       run: go mod download
 
-    - name: Install fyne-cross
-      run: go install github.com/fyne-io/fyne-cross@latest
-
-    - name: Run make build
-      run: make build
-
-    - name: Archive Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: fyne-app-artifacts
-        path: ./dist  # or the directory where the compiled binaries are located
+    - name: Run make targets
+      run: |
+        make build
+        make test
+        make lint
+        make vet
